@@ -113,6 +113,71 @@ public final class HookReelConfigScreen {
 		grapple.addEntry(entries.startBooleanToggle(Component.translatable("option.hook_and_reel.allow_pull_bosses"), editing.allowPullBosses)
 			.setDefaultValue(HookReelConfig.DEFAULT_ALLOW_PULL_BOSSES).setSaveConsumer(value -> editing.allowPullBosses = value).build());
 
+		ConfigCategory blockPulling = builder.getOrCreateCategory(
+			Component.translatable("category.hook_and_reel.block_pulling")
+		);
+		blockPulling.addEntry(entries.startBooleanToggle(
+				Component.translatable("option.hook_and_reel.block_pulling_enabled"),
+				editing.blockPullingEnabled
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_BLOCK_PULLING_ENABLED)
+			.setSaveConsumer(value -> editing.blockPullingEnabled = value)
+			.build());
+		var blockEntities = entries.startBooleanToggle(
+				Component.translatable("option.hook_and_reel.allow_pull_block_entities"),
+				false
+			)
+			.setDefaultValue(false)
+			.setTooltip(Component.translatable("option.hook_and_reel.allow_pull_block_entities.tooltip"))
+			.build();
+		blockEntities.setEditable(false);
+		blockPulling.addEntry(blockEntities);
+		blockPulling.addEntry(entries.startDoubleField(
+				Component.translatable("option.hook_and_reel.maximum_block_hardness"),
+				editing.maximumBlockHardness
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_MAXIMUM_BLOCK_HARDNESS)
+			.setMin(HookReelConfig.MIN_MAXIMUM_BLOCK_HARDNESS)
+			.setMax(HookReelConfig.MAX_MAXIMUM_BLOCK_HARDNESS)
+			.setSaveConsumer(value -> editing.maximumBlockHardness = value)
+			.build());
+		blockPulling.addEntry(entries.startDoubleField(
+				Component.translatable("option.hook_and_reel.block_pull_speed_multiplier"),
+				editing.blockPullSpeedMultiplier
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_BLOCK_PULL_SPEED_MULTIPLIER)
+			.setMin(HookReelConfig.MIN_BLOCK_PULL_SPEED_MULTIPLIER)
+			.setMax(HookReelConfig.MAX_BLOCK_PULL_SPEED_MULTIPLIER)
+			.setSaveConsumer(value -> editing.blockPullSpeedMultiplier = value)
+			.build());
+		blockPulling.addEntry(entries.startDoubleField(
+				Component.translatable("option.hook_and_reel.max_block_pull_duration_seconds"),
+				editing.maxBlockPullDurationSeconds
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_MAX_BLOCK_PULL_DURATION_SECONDS)
+			.setMin(HookReelConfig.MIN_MAX_BLOCK_PULL_DURATION_SECONDS)
+			.setMax(HookReelConfig.MAX_MAX_BLOCK_PULL_DURATION_SECONDS)
+			.setSaveConsumer(value -> editing.maxBlockPullDurationSeconds = value)
+			.build());
+		blockPulling.addEntry(entries.startDoubleField(
+				Component.translatable("option.hook_and_reel.block_pull_stop_distance"),
+				editing.blockPullStopDistance
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_BLOCK_PULL_STOP_DISTANCE)
+			.setMin(HookReelConfig.MIN_BLOCK_PULL_STOP_DISTANCE)
+			.setMax(HookReelConfig.MAX_BLOCK_PULL_STOP_DISTANCE)
+			.setSaveConsumer(value -> editing.blockPullStopDistance = value)
+			.build());
+		blockPulling.addEntry(entries.startIntField(
+				Component.translatable("option.hook_and_reel.block_pull_durability_cost"),
+				editing.blockPullDurabilityCost
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_BLOCK_PULL_DURABILITY_COST)
+			.setMin(HookReelConfig.MIN_BLOCK_PULL_DURABILITY_COST)
+			.setMax(HookReelConfig.MAX_BLOCK_PULL_DURABILITY_COST)
+			.setSaveConsumer(value -> editing.blockPullDurabilityCost = value)
+			.build());
+
 		ConfigCategory swing = builder.getOrCreateCategory(
 			Component.translatable("category.hook_and_reel.future_swing")
 		);

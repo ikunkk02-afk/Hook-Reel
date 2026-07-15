@@ -28,6 +28,13 @@ class HookReelConfigTest {
 		assertEquals(8.0D, config.maxPullDurationSeconds);
 		assertTrue(config.allowPullPlayers);
 		assertFalse(config.allowPullBosses);
+		assertTrue(config.blockPullingEnabled);
+		assertFalse(config.allowPullBlockEntities);
+		assertEquals(50.0D, config.maximumBlockHardness);
+		assertEquals(0.8D, config.blockPullSpeedMultiplier);
+		assertEquals(10.0D, config.maxBlockPullDurationSeconds);
+		assertEquals(2.5D, config.blockPullStopDistance);
+		assertEquals(3, config.blockPullDurabilityCost);
 		assertTrue(config.swingEnabled);
 		assertTrue(config.rappelEnabled);
 	}
@@ -48,6 +55,12 @@ class HookReelConfigTest {
 		config.itemPullSpeedMultiplier = Double.POSITIVE_INFINITY;
 		config.pullStopDistance = 0.0D;
 		config.maxPullDurationSeconds = 999.0D;
+		config.allowPullBlockEntities = true;
+		config.maximumBlockHardness = Double.NaN;
+		config.blockPullSpeedMultiplier = 99.0D;
+		config.maxBlockPullDurationSeconds = 0.0D;
+		config.blockPullStopDistance = Double.POSITIVE_INFINITY;
+		config.blockPullDurabilityCost = 999;
 
 		HookReelConfig validated = config.validatedCopy();
 
@@ -64,6 +77,12 @@ class HookReelConfigTest {
 		assertEquals(1.6D, validated.itemPullSpeedMultiplier);
 		assertEquals(0.25D, validated.pullStopDistance);
 		assertEquals(60.0D, validated.maxPullDurationSeconds);
+		assertFalse(validated.allowPullBlockEntities);
+		assertEquals(50.0D, validated.maximumBlockHardness);
+		assertEquals(5.0D, validated.blockPullSpeedMultiplier);
+		assertEquals(0.5D, validated.maxBlockPullDurationSeconds);
+		assertEquals(2.5D, validated.blockPullStopDistance);
+		assertEquals(64, validated.blockPullDurabilityCost);
 
 		config.luckyBonusPerLevel = -5.0D;
 		config.grappleCooldownSeconds = -1;

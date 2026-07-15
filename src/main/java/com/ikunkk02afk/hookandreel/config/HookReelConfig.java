@@ -18,6 +18,13 @@ public final class HookReelConfig {
 	public static final double DEFAULT_MAX_PULL_DURATION_SECONDS = 8.0D;
 	public static final boolean DEFAULT_ALLOW_PULL_PLAYERS = true;
 	public static final boolean DEFAULT_ALLOW_PULL_BOSSES = false;
+	public static final boolean DEFAULT_BLOCK_PULLING_ENABLED = true;
+	public static final boolean DEFAULT_ALLOW_PULL_BLOCK_ENTITIES = false;
+	public static final double DEFAULT_MAXIMUM_BLOCK_HARDNESS = 50.0D;
+	public static final double DEFAULT_BLOCK_PULL_SPEED_MULTIPLIER = 0.8D;
+	public static final double DEFAULT_MAX_BLOCK_PULL_DURATION_SECONDS = 10.0D;
+	public static final double DEFAULT_BLOCK_PULL_STOP_DISTANCE = 2.5D;
+	public static final int DEFAULT_BLOCK_PULL_DURABILITY_COST = 3;
 	public static final boolean DEFAULT_SWING_ENABLED = true;
 	public static final boolean DEFAULT_RAPPEL_ENABLED = true;
 
@@ -39,6 +46,16 @@ public final class HookReelConfig {
 	public static final double MAX_PULL_STOP_DISTANCE = 8.0D;
 	public static final double MIN_MAX_PULL_DURATION_SECONDS = 0.5D;
 	public static final double MAX_MAX_PULL_DURATION_SECONDS = 60.0D;
+	public static final double MIN_MAXIMUM_BLOCK_HARDNESS = 0.0D;
+	public static final double MAX_MAXIMUM_BLOCK_HARDNESS = 1000.0D;
+	public static final double MIN_BLOCK_PULL_SPEED_MULTIPLIER = 0.0D;
+	public static final double MAX_BLOCK_PULL_SPEED_MULTIPLIER = 5.0D;
+	public static final double MIN_MAX_BLOCK_PULL_DURATION_SECONDS = 0.5D;
+	public static final double MAX_MAX_BLOCK_PULL_DURATION_SECONDS = 60.0D;
+	public static final double MIN_BLOCK_PULL_STOP_DISTANCE = 0.5D;
+	public static final double MAX_BLOCK_PULL_STOP_DISTANCE = 8.0D;
+	public static final int MIN_BLOCK_PULL_DURABILITY_COST = 0;
+	public static final int MAX_BLOCK_PULL_DURABILITY_COST = 64;
 
 	public boolean luckyEnchantmentEnabled = DEFAULT_LUCKY_ENCHANTMENT_ENABLED;
 	public double luckyBonusPerLevel = DEFAULT_LUCKY_BONUS_PER_LEVEL;
@@ -57,6 +74,13 @@ public final class HookReelConfig {
 	public double maxPullDurationSeconds = DEFAULT_MAX_PULL_DURATION_SECONDS;
 	public boolean allowPullPlayers = DEFAULT_ALLOW_PULL_PLAYERS;
 	public boolean allowPullBosses = DEFAULT_ALLOW_PULL_BOSSES;
+	public boolean blockPullingEnabled = DEFAULT_BLOCK_PULLING_ENABLED;
+	public boolean allowPullBlockEntities = DEFAULT_ALLOW_PULL_BLOCK_ENTITIES;
+	public double maximumBlockHardness = DEFAULT_MAXIMUM_BLOCK_HARDNESS;
+	public double blockPullSpeedMultiplier = DEFAULT_BLOCK_PULL_SPEED_MULTIPLIER;
+	public double maxBlockPullDurationSeconds = DEFAULT_MAX_BLOCK_PULL_DURATION_SECONDS;
+	public double blockPullStopDistance = DEFAULT_BLOCK_PULL_STOP_DISTANCE;
+	public int blockPullDurabilityCost = DEFAULT_BLOCK_PULL_DURABILITY_COST;
 	public boolean swingEnabled = DEFAULT_SWING_ENABLED;
 	public boolean rappelEnabled = DEFAULT_RAPPEL_ENABLED;
 
@@ -79,6 +103,13 @@ public final class HookReelConfig {
 		copy.maxPullDurationSeconds = maxPullDurationSeconds;
 		copy.allowPullPlayers = allowPullPlayers;
 		copy.allowPullBosses = allowPullBosses;
+		copy.blockPullingEnabled = blockPullingEnabled;
+		copy.allowPullBlockEntities = allowPullBlockEntities;
+		copy.maximumBlockHardness = maximumBlockHardness;
+		copy.blockPullSpeedMultiplier = blockPullSpeedMultiplier;
+		copy.maxBlockPullDurationSeconds = maxBlockPullDurationSeconds;
+		copy.blockPullStopDistance = blockPullStopDistance;
+		copy.blockPullDurabilityCost = blockPullDurabilityCost;
 		copy.swingEnabled = swingEnabled;
 		copy.rappelEnabled = rappelEnabled;
 		return copy;
@@ -132,6 +163,12 @@ public final class HookReelConfig {
 		validated.itemPullSpeedMultiplier = validatedFiniteClamped(validated.itemPullSpeedMultiplier, DEFAULT_ITEM_PULL_SPEED_MULTIPLIER, MIN_ITEM_PULL_SPEED_MULTIPLIER, MAX_ITEM_PULL_SPEED_MULTIPLIER);
 		validated.pullStopDistance = validatedFiniteClamped(validated.pullStopDistance, DEFAULT_PULL_STOP_DISTANCE, MIN_PULL_STOP_DISTANCE, MAX_PULL_STOP_DISTANCE);
 		validated.maxPullDurationSeconds = validatedFiniteClamped(validated.maxPullDurationSeconds, DEFAULT_MAX_PULL_DURATION_SECONDS, MIN_MAX_PULL_DURATION_SECONDS, MAX_MAX_PULL_DURATION_SECONDS);
+		validated.allowPullBlockEntities = false;
+		validated.maximumBlockHardness = validatedFiniteClamped(validated.maximumBlockHardness, DEFAULT_MAXIMUM_BLOCK_HARDNESS, MIN_MAXIMUM_BLOCK_HARDNESS, MAX_MAXIMUM_BLOCK_HARDNESS);
+		validated.blockPullSpeedMultiplier = validatedFiniteClamped(validated.blockPullSpeedMultiplier, DEFAULT_BLOCK_PULL_SPEED_MULTIPLIER, MIN_BLOCK_PULL_SPEED_MULTIPLIER, MAX_BLOCK_PULL_SPEED_MULTIPLIER);
+		validated.maxBlockPullDurationSeconds = validatedFiniteClamped(validated.maxBlockPullDurationSeconds, DEFAULT_MAX_BLOCK_PULL_DURATION_SECONDS, MIN_MAX_BLOCK_PULL_DURATION_SECONDS, MAX_MAX_BLOCK_PULL_DURATION_SECONDS);
+		validated.blockPullStopDistance = validatedFiniteClamped(validated.blockPullStopDistance, DEFAULT_BLOCK_PULL_STOP_DISTANCE, MIN_BLOCK_PULL_STOP_DISTANCE, MAX_BLOCK_PULL_STOP_DISTANCE);
+		validated.blockPullDurabilityCost = Math.clamp(validated.blockPullDurabilityCost, MIN_BLOCK_PULL_DURABILITY_COST, MAX_BLOCK_PULL_DURABILITY_COST);
 		return validated;
 	}
 

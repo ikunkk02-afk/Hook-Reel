@@ -35,6 +35,12 @@ class HookReelConfigManagerTest {
 			  "allowStackWithLuckOfTheSea": false,
 			  "grappleCooldownSeconds": 500,
 			  "maxChargeTimeSeconds": 2.5,
+			  "allowPullBlockEntities": true,
+			  "maximumBlockHardness": 5000.0,
+			  "blockPullSpeedMultiplier": -4.0,
+			  "maxBlockPullDurationSeconds": 90.0,
+			  "blockPullStopDistance": 0.1,
+			  "blockPullDurabilityCost": 100,
 			  "swingEnabled": false,
 			  "rappelEnabled": true
 			}
@@ -48,6 +54,12 @@ class HookReelConfigManagerTest {
 		assertEquals(false, config.allowStackWithLuckOfTheSea);
 		assertEquals(300, config.grappleCooldownSeconds);
 		assertEquals(2.5D, config.maxChargeTimeSeconds);
+		assertEquals(false, config.allowPullBlockEntities);
+		assertEquals(1000.0D, config.maximumBlockHardness);
+		assertEquals(0.0D, config.blockPullSpeedMultiplier);
+		assertEquals(60.0D, config.maxBlockPullDurationSeconds);
+		assertEquals(0.5D, config.blockPullStopDistance);
+		assertEquals(64, config.blockPullDurabilityCost);
 		assertTrue(Files.readString(path).contains("\"grappleCooldownSeconds\": 300"));
 		assertTrue(Files.notExists(path.resolveSibling("hook_and_reel.json.tmp")));
 	}

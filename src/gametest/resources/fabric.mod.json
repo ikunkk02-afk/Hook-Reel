@@ -1,0 +1,18 @@
+{
+	"schemaVersion": 1,
+	"id": "hook_and_reel_gametest",
+	"version": "1.0.0",
+	"name": "Hook & Reel Game Tests",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-gametest": [
+			"com.ikunkk02afk.hookandreel.gametest.HookReelGameTests"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.1",
+		"fabric-api": "*",
+		"hook_and_reel": "*"
+	}
+}

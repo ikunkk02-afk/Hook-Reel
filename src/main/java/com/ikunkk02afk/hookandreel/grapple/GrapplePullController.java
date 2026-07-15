@@ -2,6 +2,7 @@ package com.ikunkk02afk.hookandreel.grapple;
 
 import com.ikunkk02afk.hookandreel.config.HookReelConfig;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
+import com.ikunkk02afk.hookandreel.entity.PulledBlockEntity;
 import com.ikunkk02afk.hookandreel.tag.ModEntityTypeTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,7 +12,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class GrapplePullController {
@@ -43,6 +43,7 @@ public final class GrapplePullController {
 			finish(hook, EndReason.DENIED, target);
 			return;
 		}
+		access.hookAndReel$attachTarget(target, GrappleTargetType.classify(target));
 		access.hookAndReel$startPull(hook.level().getGameTime(), target.position());
 	}
 
@@ -68,6 +69,9 @@ public final class GrapplePullController {
 		if (target == null || access.hookAndReel$getPullStartGameTime() < 0L) {
 			return;
 		}
+		if (target instanceof PulledBlockEntity) {
+			return;
+		}
 		HookReelConfig config = HookReelConfigManager.get();
 		if (target.level() != hook.level() || !isPullable(target, config)) {
 			finish(hook, EndReason.LIFECYCLE, target);
@@ -89,7 +93,7 @@ public final class GrapplePullController {
 			return;
 		}
 
-		double boxDistance = boundingBoxDistance(owner.getBoundingBox(), target.getBoundingBox());
+		double boxDistance = GrappleMath.boundingBoxDistance(owner.getBoundingBox(), target.getBoundingBox());
 		if (boxDistance <= config.pullStopDistance) {
 			finish(hook, EndReason.SUCCESS, target);
 			return;
@@ -112,10 +116,18 @@ public final class GrapplePullController {
 	}
 
 	public static void manualCancel(FishingHook hook) {
+		if (hook.getHookedIn() instanceof PulledBlockEntity pulled) {
+			GrappleBlockController.manualCancel(hook, pulled);
+			return;
+		}
 		finish(hook, EndReason.MANUAL_CANCEL, hook.getHookedIn());
 	}
 
 	public static void lifecycleAbort(FishingHook hook) {
+		if (hook.getHookedIn() instanceof PulledBlockEntity pulled) {
+			GrappleBlockController.lifecycleAbort(hook, pulled);
+			return;
+		}
 		finish(hook, EndReason.LIFECYCLE, hook.getHookedIn());
 	}
 
@@ -128,13 +140,6 @@ public final class GrapplePullController {
 		if (velocity.dot(fromOwner) > 0.0D) {
 			hook.setDeltaMovement(0.0D, Math.min(velocity.y, 0.0D), 0.0D);
 		}
-	}
-
-	private static double boundingBoxDistance(AABB first, AABB second) {
-		double x = GrappleMath.axisGap(first.minX, first.maxX, second.minX, second.maxX);
-		double y = GrappleMath.axisGap(first.minY, first.maxY, second.minY, second.maxY);
-		double z = GrappleMath.axisGap(first.minZ, first.maxZ, second.minZ, second.maxZ);
-		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	private static void finish(FishingHook hook, EndReason reason, Entity target) {

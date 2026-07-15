@@ -71,6 +71,30 @@ class ResourceContractTest {
 	}
 
 	@Test
+	void blockPullingSafetyTagsCoverTechnicalAndMultiblockFamilies() throws IOException {
+		JsonObject immovable = json(Path.of(
+			"src/main/resources/data/hook_and_reel/tags/block/grapple_immovable.json"
+		));
+		JsonObject multiblock = json(Path.of(
+			"src/main/resources/data/hook_and_reel/tags/block/grapple_multiblock_unsafe.json"
+		));
+
+		String fixed = immovable.getAsJsonArray("values").toString();
+		assertTrue(fixed.contains("minecraft:bedrock"));
+		assertTrue(fixed.contains("minecraft:barrier"));
+		assertTrue(fixed.contains("minecraft:command_block"));
+		assertTrue(fixed.contains("minecraft:nether_portal"));
+		assertTrue(fixed.contains("minecraft:reinforced_deepslate"));
+
+		String unsafe = multiblock.getAsJsonArray("values").toString();
+		assertTrue(unsafe.contains("#minecraft:doors"));
+		assertTrue(unsafe.contains("#minecraft:beds"));
+		assertTrue(unsafe.contains("minecraft:big_dripleaf"));
+		assertTrue(unsafe.contains("minecraft:kelp_plant"));
+		assertTrue(unsafe.contains("minecraft:piston"));
+	}
+
+	@Test
 	void translationsAndClientIsolationArePresent() throws IOException {
 		JsonObject english = json(Path.of(
 			"src/main/resources/assets/hook_and_reel/lang/en_us.json"
@@ -83,6 +107,10 @@ class ResourceContractTest {
 		assertEquals("幸运", chinese.get("enchantment.hook_and_reel.lucky_catch").getAsString());
 		assertEquals("Grappling Hook", english.get("enchantment.hook_and_reel.grappling_hook").getAsString());
 		assertEquals("钩锁", chinese.get("enchantment.hook_and_reel.grappling_hook").getAsString());
+		assertEquals("Pulled Block", english.get("entity.hook_and_reel.pulled_block").getAsString());
+		assertEquals("被拖拽的方块", chinese.get("entity.hook_and_reel.pulled_block").getAsString());
+		assertTrue(english.has("option.hook_and_reel.allow_pull_block_entities.tooltip"));
+		assertTrue(chinese.has("option.hook_and_reel.allow_pull_block_entities.tooltip"));
 
 		try (Stream<Path> files = Files.walk(Path.of("src/main"))) {
 			assertFalse(files.filter(Files::isRegularFile).anyMatch(ResourceContractTest::containsClientImport));

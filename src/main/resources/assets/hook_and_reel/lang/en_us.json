@@ -5,6 +5,7 @@
 	"title.hook_and_reel.config": "Hook & Reel Configuration",
 	"category.hook_and_reel.lucky": "Lucky Catch",
 	"category.hook_and_reel.grapple": "Grappling Hook",
+	"category.hook_and_reel.block_pulling": "Block Pulling",
 	"category.hook_and_reel.future_swing": "Future Swinging",
 	"option.hook_and_reel.lucky_enchantment_enabled": "Enable Lucky Catch effect",
 	"option.hook_and_reel.lucky_bonus_per_level": "Extra luck per level",
@@ -24,6 +25,15 @@
 	"option.hook_and_reel.max_pull_duration_seconds": "Maximum pull duration (seconds)",
 	"option.hook_and_reel.allow_pull_players": "Allow pulling players",
 	"option.hook_and_reel.allow_pull_bosses": "Allow pulling bosses",
+	"option.hook_and_reel.block_pulling_enabled": "Enable block pulling",
+	"option.hook_and_reel.allow_pull_block_entities": "Allow pulling block entities",
+	"option.hook_and_reel.allow_pull_block_entities.tooltip": "Read-only: block entities are not supported in this version.",
+	"option.hook_and_reel.maximum_block_hardness": "Maximum block hardness",
+	"option.hook_and_reel.block_pull_speed_multiplier": "Block pull speed multiplier",
+	"option.hook_and_reel.max_block_pull_duration_seconds": "Maximum block pull duration (seconds)",
+	"option.hook_and_reel.block_pull_stop_distance": "Block pull stop distance",
+	"option.hook_and_reel.block_pull_durability_cost": "Block pull durability cost",
+	"entity.hook_and_reel.pulled_block": "Pulled Block",
 	"option.hook_and_reel.swing_enabled": "Enable swinging",
 	"option.hook_and_reel.rappel_enabled": "Enable rappelling"
 }

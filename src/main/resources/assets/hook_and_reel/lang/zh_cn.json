@@ -5,6 +5,7 @@
 	"title.hook_and_reel.config": "Hook & Reel 配置",
 	"category.hook_and_reel.lucky": "幸运附魔",
 	"category.hook_and_reel.grapple": "钩锁附魔",
+	"category.hook_and_reel.block_pulling": "方块拖拽",
 	"category.hook_and_reel.future_swing": "未来挂钩功能",
 	"option.hook_and_reel.lucky_enchantment_enabled": "启用幸运附魔效果",
 	"option.hook_and_reel.lucky_bonus_per_level": "每级额外幸运值",
@@ -24,6 +25,15 @@
 	"option.hook_and_reel.max_pull_duration_seconds": "最大拖拽时间（秒）",
 	"option.hook_and_reel.allow_pull_players": "允许拖拽玩家",
 	"option.hook_and_reel.allow_pull_bosses": "允许拖拽 Boss",
+	"option.hook_and_reel.block_pulling_enabled": "启用方块拖拽",
+	"option.hook_and_reel.allow_pull_block_entities": "允许拖拽方块实体",
+	"option.hook_and_reel.allow_pull_block_entities.tooltip": "只读：当前版本不支持搬运方块实体。",
+	"option.hook_and_reel.maximum_block_hardness": "最大方块硬度",
+	"option.hook_and_reel.block_pull_speed_multiplier": "方块拖拽速度倍率",
+	"option.hook_and_reel.max_block_pull_duration_seconds": "方块最大拖拽时间（秒）",
+	"option.hook_and_reel.block_pull_stop_distance": "方块拖拽停止距离",
+	"option.hook_and_reel.block_pull_durability_cost": "方块拖拽耐久消耗",
+	"entity.hook_and_reel.pulled_block": "被拖拽的方块",
 	"option.hook_and_reel.swing_enabled": "启用摆荡",
 	"option.hook_and_reel.rappel_enabled": "启用绳降"
 }

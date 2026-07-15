@@ -2,6 +2,8 @@ package com.ikunkk02afk.hookandreel.mixin;
 
 import com.ikunkk02afk.hookandreel.enchantment.LuckyCatchLogic;
 import com.ikunkk02afk.hookandreel.grapple.GrapplePullController;
+import com.ikunkk02afk.hookandreel.grapple.GrappleBlockController;
+import com.ikunkk02afk.hookandreel.grapple.GrappleTargetType;
 import com.ikunkk02afk.hookandreel.grapple.GrapplingBobberAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -12,9 +14,11 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,6 +45,13 @@ public abstract class FishingHookMixin implements GrapplingBobberAccess {
 	private long hookAndReel$pullStartGameTime = -1L;
 	@Unique
 	private Vec3 hookAndReel$lastTargetPosition;
+	@Unique
+	private GrappleTargetType hookAndReel$targetType = GrappleTargetType.NONE;
+
+	@Shadow
+	private void setHookedEntity(@Nullable Entity entity) {
+		throw new AssertionError();
+	}
 
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	private void hookAndReel$tickGrapple(CallbackInfo ci) {
@@ -56,6 +67,22 @@ public abstract class FishingHookMixin implements GrapplingBobberAccess {
 		FishingHook hook = (FishingHook) (Object) this;
 		if (hookAndReel$grapple && !hook.level().isClientSide) {
 			GrapplePullController.beginPull(hook, hitResult.getEntity());
+		}
+	}
+
+	@Inject(method = "onHitBlock", at = @At("RETURN"))
+	private void hookAndReel$beginBlockPull(BlockHitResult hitResult, CallbackInfo ci) {
+		FishingHook hook = (FishingHook) (Object) this;
+		if (hookAndReel$grapple && !hook.level().isClientSide) {
+			GrappleBlockController.tryBegin(hook, hitResult);
+		}
+	}
+
+	@Inject(method = "remove", at = @At("HEAD"))
+	private void hookAndReel$recoverBlockOnRemoval(Entity.RemovalReason reason, CallbackInfo ci) {
+		FishingHook hook = (FishingHook) (Object) this;
+		if (!hook.level().isClientSide) {
+			GrappleBlockController.onHookRemoved(hook, reason);
 		}
 	}
 
@@ -165,6 +192,17 @@ public abstract class FishingHookMixin implements GrapplingBobberAccess {
 	}
 
 	@Override
+	public void hookAndReel$attachTarget(Entity target, GrappleTargetType targetType) {
+		setHookedEntity(target);
+		hookAndReel$targetType = targetType;
+	}
+
+	@Override
+	public GrappleTargetType hookAndReel$getTargetType() {
+		return hookAndReel$targetType;
+	}
+
+	@Override
 	@Nullable
 	public Vec3 hookAndReel$getLastTargetPosition() {
 		return hookAndReel$lastTargetPosition;
@@ -177,6 +215,9 @@ public abstract class FishingHookMixin implements GrapplingBobberAccess {
 
 	@Override
 	public boolean hookAndReel$isPulling(Entity target) {
-		return hookAndReel$grapple && hookAndReel$pullStartGameTime >= 0L && target != null;
+		return hookAndReel$grapple
+			&& hookAndReel$targetType != GrappleTargetType.NONE
+			&& hookAndReel$pullStartGameTime >= 0L
+			&& target != null;
 	}
 }

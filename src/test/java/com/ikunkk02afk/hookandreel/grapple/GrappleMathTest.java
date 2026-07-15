@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 import org.junit.jupiter.api.Test;
 
 class GrappleMathTest {
@@ -34,5 +35,27 @@ class GrappleMathTest {
 	void axisGapSupportsCollisionBoxStopChecks() {
 		assertEquals(0.0D, GrappleMath.axisGap(0.0D, 1.0D, 0.5D, 2.0D));
 		assertEquals(2.0D, GrappleMath.axisGap(0.0D, 1.0D, 3.0D, 4.0D));
+	}
+
+	@Test
+	void blockMultiplierCapsVelocityAndBoundingBoxDistanceUsesSurfaceGap() {
+		double multiplier = 0.8D;
+		Vec3 velocity = GrappleMath.pulledVelocity(
+			new Vec3(8.0D, 0.0D, 0.0D),
+			new Vec3(10.0D, 0.0D, 0.0D),
+			10.0D,
+			2.5D,
+			0.12D * multiplier,
+			1.5D * multiplier
+		);
+		assertEquals(1.2D, velocity.length(), 1.0E-9D);
+		assertEquals(
+			2.0D,
+			GrappleMath.boundingBoxDistance(
+				new AABB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D),
+				new AABB(3.0D, 0.25D, 0.25D, 4.0D, 0.75D, 0.75D)
+			),
+			1.0E-9D
+		);
 	}
 }

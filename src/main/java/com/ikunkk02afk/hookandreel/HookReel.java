@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 
 import com.ikunkk02afk.hookandreel.component.ModDataComponents;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
+import com.ikunkk02afk.hookandreel.entity.ModEntityTypes;
 import com.ikunkk02afk.hookandreel.network.HookReelNetworking;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,6 +23,7 @@ public class HookReel implements ModInitializer {
 	public void onInitialize() {
 		HookReelConfigManager.load();
 		ModDataComponents.register();
+		ModEntityTypes.register();
 		HookReelNetworking.initialize();
 		LOGGER.info("Hook & Reel initialized");
 	}

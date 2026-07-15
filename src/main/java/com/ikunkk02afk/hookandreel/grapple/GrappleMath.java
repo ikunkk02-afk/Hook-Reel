@@ -1,6 +1,7 @@
 package com.ikunkk02afk.hookandreel.grapple;
 
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 
 public final class GrappleMath {
 	private static final double VELOCITY_RETENTION = 0.55D;
@@ -62,5 +63,12 @@ public final class GrappleMath {
 			return firstMin - secondMax;
 		}
 		return 0.0D;
+	}
+
+	public static double boundingBoxDistance(AABB first, AABB second) {
+		double x = axisGap(first.minX, first.maxX, second.minX, second.maxX);
+		double y = axisGap(first.minY, first.maxY, second.minY, second.maxY);
+		double z = axisGap(first.minZ, first.maxZ, second.minZ, second.maxZ);
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 }

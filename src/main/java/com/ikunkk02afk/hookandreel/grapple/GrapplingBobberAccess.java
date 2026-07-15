@@ -20,6 +20,10 @@ public interface GrapplingBobberAccess {
 
 	void hookAndReel$startPull(long gameTime, Vec3 targetPosition);
 
+	void hookAndReel$attachTarget(Entity target, GrappleTargetType targetType);
+
+	GrappleTargetType hookAndReel$getTargetType();
+
 	Vec3 hookAndReel$getLastTargetPosition();
 
 	void hookAndReel$setLastTargetPosition(Vec3 position);
