@@ -48,8 +48,15 @@ public final class HookReelConfigScreen {
 			.build());
 
 		ConfigCategory grapple = builder.getOrCreateCategory(
-			Component.translatable("category.hook_and_reel.future_grapple")
+			Component.translatable("category.hook_and_reel.grapple")
 		);
+		grapple.addEntry(entries.startBooleanToggle(
+				Component.translatable("option.hook_and_reel.grappling_hook_enabled"),
+				editing.grapplingHookEnabled
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_GRAPPLING_HOOK_ENABLED)
+			.setSaveConsumer(value -> editing.grapplingHookEnabled = value)
+			.build());
 		grapple.addEntry(entries.startIntField(
 				Component.translatable("option.hook_and_reel.grapple_cooldown_seconds"),
 				editing.grappleCooldownSeconds
@@ -68,6 +75,43 @@ public final class HookReelConfigScreen {
 			.setMax(HookReelConfig.MAX_MAX_CHARGE_TIME_SECONDS)
 			.setSaveConsumer(value -> editing.maxChargeTimeSeconds = value)
 			.build());
+		grapple.addEntry(entries.startDoubleField(
+				Component.translatable("option.hook_and_reel.minimum_grapple_range"),
+				editing.minimumGrappleRange
+			)
+			.setDefaultValue(HookReelConfig.DEFAULT_MINIMUM_GRAPPLE_RANGE)
+			.setMin(HookReelConfig.MIN_GRAPPLE_RANGE)
+			.setMax(HookReelConfig.MAX_GRAPPLE_RANGE)
+			.setSaveConsumer(value -> editing.minimumGrappleRange = value)
+			.build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.grapple_level_1_max_range"), editing.grappleLevel1MaxRange)
+			.setDefaultValue(HookReelConfig.DEFAULT_GRAPPLE_LEVEL_1_MAX_RANGE).setMin(HookReelConfig.MIN_GRAPPLE_RANGE).setMax(HookReelConfig.MAX_GRAPPLE_RANGE)
+			.setSaveConsumer(value -> editing.grappleLevel1MaxRange = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.grapple_level_2_max_range"), editing.grappleLevel2MaxRange)
+			.setDefaultValue(HookReelConfig.DEFAULT_GRAPPLE_LEVEL_2_MAX_RANGE).setMin(HookReelConfig.MIN_GRAPPLE_RANGE).setMax(HookReelConfig.MAX_GRAPPLE_RANGE)
+			.setSaveConsumer(value -> editing.grappleLevel2MaxRange = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.grapple_level_3_max_range"), editing.grappleLevel3MaxRange)
+			.setDefaultValue(HookReelConfig.DEFAULT_GRAPPLE_LEVEL_3_MAX_RANGE).setMin(HookReelConfig.MIN_GRAPPLE_RANGE).setMax(HookReelConfig.MAX_GRAPPLE_RANGE)
+			.setSaveConsumer(value -> editing.grappleLevel3MaxRange = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.pull_strength"), editing.pullStrength)
+			.setDefaultValue(HookReelConfig.DEFAULT_PULL_STRENGTH).setMin(HookReelConfig.MIN_PULL_STRENGTH).setMax(HookReelConfig.MAX_PULL_STRENGTH)
+			.setSaveConsumer(value -> editing.pullStrength = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.maximum_pull_speed"), editing.maximumPullSpeed)
+			.setDefaultValue(HookReelConfig.DEFAULT_MAXIMUM_PULL_SPEED).setMin(HookReelConfig.MIN_MAXIMUM_PULL_SPEED).setMax(HookReelConfig.MAX_MAXIMUM_PULL_SPEED)
+			.setSaveConsumer(value -> editing.maximumPullSpeed = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.item_pull_speed_multiplier"), editing.itemPullSpeedMultiplier)
+			.setDefaultValue(HookReelConfig.DEFAULT_ITEM_PULL_SPEED_MULTIPLIER).setMin(HookReelConfig.MIN_ITEM_PULL_SPEED_MULTIPLIER).setMax(HookReelConfig.MAX_ITEM_PULL_SPEED_MULTIPLIER)
+			.setSaveConsumer(value -> editing.itemPullSpeedMultiplier = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.pull_stop_distance"), editing.pullStopDistance)
+			.setDefaultValue(HookReelConfig.DEFAULT_PULL_STOP_DISTANCE).setMin(HookReelConfig.MIN_PULL_STOP_DISTANCE).setMax(HookReelConfig.MAX_PULL_STOP_DISTANCE)
+			.setSaveConsumer(value -> editing.pullStopDistance = value).build());
+		grapple.addEntry(entries.startDoubleField(Component.translatable("option.hook_and_reel.max_pull_duration_seconds"), editing.maxPullDurationSeconds)
+			.setDefaultValue(HookReelConfig.DEFAULT_MAX_PULL_DURATION_SECONDS).setMin(HookReelConfig.MIN_MAX_PULL_DURATION_SECONDS).setMax(HookReelConfig.MAX_MAX_PULL_DURATION_SECONDS)
+			.setSaveConsumer(value -> editing.maxPullDurationSeconds = value).build());
+		grapple.addEntry(entries.startBooleanToggle(Component.translatable("option.hook_and_reel.allow_pull_players"), editing.allowPullPlayers)
+			.setDefaultValue(HookReelConfig.DEFAULT_ALLOW_PULL_PLAYERS).setSaveConsumer(value -> editing.allowPullPlayers = value).build());
+		grapple.addEntry(entries.startBooleanToggle(Component.translatable("option.hook_and_reel.allow_pull_bosses"), editing.allowPullBosses)
+			.setDefaultValue(HookReelConfig.DEFAULT_ALLOW_PULL_BOSSES).setSaveConsumer(value -> editing.allowPullBosses = value).build());
 
 		ConfigCategory swing = builder.getOrCreateCategory(
 			Component.translatable("category.hook_and_reel.future_swing")

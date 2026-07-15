@@ -16,6 +16,18 @@ class HookReelConfigTest {
 		assertTrue(config.allowStackWithLuckOfTheSea);
 		assertEquals(10, config.grappleCooldownSeconds);
 		assertEquals(1.5D, config.maxChargeTimeSeconds);
+		assertTrue(config.grapplingHookEnabled);
+		assertEquals(8.0D, config.minimumGrappleRange);
+		assertEquals(24.0D, config.grappleLevel1MaxRange);
+		assertEquals(36.0D, config.grappleLevel2MaxRange);
+		assertEquals(48.0D, config.grappleLevel3MaxRange);
+		assertEquals(0.12D, config.pullStrength);
+		assertEquals(1.5D, config.maximumPullSpeed);
+		assertEquals(1.6D, config.itemPullSpeedMultiplier);
+		assertEquals(2.0D, config.pullStopDistance);
+		assertEquals(8.0D, config.maxPullDurationSeconds);
+		assertTrue(config.allowPullPlayers);
+		assertFalse(config.allowPullBosses);
 		assertTrue(config.swingEnabled);
 		assertTrue(config.rappelEnabled);
 	}
@@ -27,6 +39,15 @@ class HookReelConfigTest {
 		config.grappleCooldownSeconds = 999;
 		config.maxChargeTimeSeconds = Double.POSITIVE_INFINITY;
 		config.swingEnabled = false;
+		config.minimumGrappleRange = Double.NaN;
+		config.grappleLevel1MaxRange = -1.0D;
+		config.grappleLevel2MaxRange = 5.0D;
+		config.grappleLevel3MaxRange = 2.0D;
+		config.pullStrength = -1.0D;
+		config.maximumPullSpeed = 99.0D;
+		config.itemPullSpeedMultiplier = Double.POSITIVE_INFINITY;
+		config.pullStopDistance = 0.0D;
+		config.maxPullDurationSeconds = 999.0D;
 
 		HookReelConfig validated = config.validatedCopy();
 
@@ -34,6 +55,15 @@ class HookReelConfigTest {
 		assertEquals(300, validated.grappleCooldownSeconds);
 		assertEquals(1.5D, validated.maxChargeTimeSeconds);
 		assertFalse(validated.swingEnabled);
+		assertEquals(8.0D, validated.minimumGrappleRange);
+		assertEquals(8.0D, validated.grappleLevel1MaxRange);
+		assertEquals(8.0D, validated.grappleLevel2MaxRange);
+		assertEquals(8.0D, validated.grappleLevel3MaxRange);
+		assertEquals(0.0D, validated.pullStrength);
+		assertEquals(10.0D, validated.maximumPullSpeed);
+		assertEquals(1.6D, validated.itemPullSpeedMultiplier);
+		assertEquals(0.25D, validated.pullStopDistance);
+		assertEquals(60.0D, validated.maxPullDurationSeconds);
 
 		config.luckyBonusPerLevel = -5.0D;
 		config.grappleCooldownSeconds = -1;

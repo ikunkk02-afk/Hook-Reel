@@ -50,6 +50,27 @@ class ResourceContractTest {
 	}
 
 	@Test
+	void grapplingHookIsDataDrivenAndBossFilteringIsExtensible() throws IOException {
+		JsonObject enchantment = json(Path.of(
+			"src/main/resources/data/hook_and_reel/enchantment/grappling_hook.json"
+		));
+		JsonObject nonTreasure = json(Path.of(
+			"src/main/resources/data/minecraft/tags/enchantment/non_treasure.json"
+		));
+		JsonObject blacklist = json(Path.of(
+			"src/main/resources/data/hook_and_reel/tags/entity_type/grapple_pull_blacklist.json"
+		));
+
+		assertEquals(3, enchantment.get("max_level").getAsInt());
+		assertEquals("#minecraft:enchantable/fishing", enchantment.get("supported_items").getAsString());
+		assertEquals("#minecraft:enchantable/fishing", enchantment.get("primary_items").getAsString());
+		assertFalse(enchantment.has("exclusive_set"));
+		assertTrue(nonTreasure.getAsJsonArray("values").toString().contains("hook_and_reel:grappling_hook"));
+		assertTrue(blacklist.getAsJsonArray("values").toString().contains("minecraft:ender_dragon"));
+		assertTrue(blacklist.getAsJsonArray("values").toString().contains("minecraft:wither"));
+	}
+
+	@Test
 	void translationsAndClientIsolationArePresent() throws IOException {
 		JsonObject english = json(Path.of(
 			"src/main/resources/assets/hook_and_reel/lang/en_us.json"
@@ -60,6 +81,8 @@ class ResourceContractTest {
 
 		assertEquals("Lucky Catch", english.get("enchantment.hook_and_reel.lucky_catch").getAsString());
 		assertEquals("幸运", chinese.get("enchantment.hook_and_reel.lucky_catch").getAsString());
+		assertEquals("Grappling Hook", english.get("enchantment.hook_and_reel.grappling_hook").getAsString());
+		assertEquals("钩锁", chinese.get("enchantment.hook_and_reel.grappling_hook").getAsString());
 
 		try (Stream<Path> files = Files.walk(Path.of("src/main"))) {
 			assertFalse(files.filter(Files::isRegularFile).anyMatch(ResourceContractTest::containsClientImport));
