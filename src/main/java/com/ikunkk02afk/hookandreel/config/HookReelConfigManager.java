@@ -7,7 +7,6 @@ import com.ikunkk02afk.hookandreel.HookReel;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -35,8 +34,11 @@ public final class HookReelConfigManager {
 			return;
 		}
 
-		try (Reader reader = Files.newBufferedReader(path)) {
-			HookReelConfig loaded = GSON.fromJson(reader, HookReelConfig.class);
+		try {
+			HookReelConfig loaded;
+			try (Reader reader = Files.newBufferedReader(path)) {
+				loaded = GSON.fromJson(reader, HookReelConfig.class);
+			}
 			if (loaded == null) {
 				throw new JsonParseException("Config root must be a JSON object");
 			}
@@ -88,8 +90,13 @@ public final class HookReelConfigManager {
 					StandardCopyOption.REPLACE_EXISTING,
 					StandardCopyOption.ATOMIC_MOVE
 				);
-			} catch (AtomicMoveNotSupportedException ignored) {
-				Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException atomicMoveFailure) {
+				try {
+					Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException fallbackFailure) {
+					atomicMoveFailure.addSuppressed(fallbackFailure);
+					throw atomicMoveFailure;
+				}
 			}
 		} catch (IOException exception) {
 			HookReel.LOGGER.warn("Could not save Hook & Reel config to {}", path, exception);

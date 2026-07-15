@@ -48,6 +48,8 @@ class HookReelConfigManagerTest {
 		assertEquals(false, config.allowStackWithLuckOfTheSea);
 		assertEquals(300, config.grappleCooldownSeconds);
 		assertEquals(2.5D, config.maxChargeTimeSeconds);
+		assertTrue(Files.readString(path).contains("\"grappleCooldownSeconds\": 300"));
+		assertTrue(Files.notExists(path.resolveSibling("hook_and_reel.json.tmp")));
 	}
 
 	@Test
