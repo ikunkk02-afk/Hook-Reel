@@ -1,0 +1,15 @@
+{
+	"enchantment.hook_and_reel.lucky_catch": "幸运",
+	"title.hook_and_reel.config": "Hook & Reel 配置",
+	"category.hook_and_reel.lucky": "幸运附魔",
+	"category.hook_and_reel.future_grapple": "未来钩锁功能",
+	"category.hook_and_reel.future_swing": "未来挂钩功能",
+	"option.hook_and_reel.lucky_enchantment_enabled": "启用幸运附魔效果",
+	"option.hook_and_reel.lucky_bonus_per_level": "每级额外幸运值",
+	"option.hook_and_reel.lucky_bonus_per_level.tooltip": "仅加入当前一次钓鱼的战利品上下文。",
+	"option.hook_and_reel.allow_stack_with_luck_of_the_sea": "允许与海之眷顾共存",
+	"option.hook_and_reel.grapple_cooldown_seconds": "钩锁冷却（秒）",
+	"option.hook_and_reel.max_charge_time_seconds": "最大蓄力时间（秒）",
+	"option.hook_and_reel.swing_enabled": "启用摆荡",
+	"option.hook_and_reel.rappel_enabled": "启用绳降"
+}

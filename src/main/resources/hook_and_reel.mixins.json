@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "com.ikunkk02afk.hookandreel.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"EnchantmentCompatibilityMixin",
+		"FishingHookMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

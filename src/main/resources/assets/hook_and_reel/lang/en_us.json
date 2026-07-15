@@ -1,0 +1,15 @@
+{
+	"enchantment.hook_and_reel.lucky_catch": "Lucky Catch",
+	"title.hook_and_reel.config": "Hook & Reel Configuration",
+	"category.hook_and_reel.lucky": "Lucky Catch",
+	"category.hook_and_reel.future_grapple": "Future Grappling",
+	"category.hook_and_reel.future_swing": "Future Swinging",
+	"option.hook_and_reel.lucky_enchantment_enabled": "Enable Lucky Catch effect",
+	"option.hook_and_reel.lucky_bonus_per_level": "Extra luck per level",
+	"option.hook_and_reel.lucky_bonus_per_level.tooltip": "Added only to the current fishing loot context.",
+	"option.hook_and_reel.allow_stack_with_luck_of_the_sea": "Allow Luck of the Sea stacking",
+	"option.hook_and_reel.grapple_cooldown_seconds": "Grapple cooldown (seconds)",
+	"option.hook_and_reel.max_charge_time_seconds": "Maximum charge time (seconds)",
+	"option.hook_and_reel.swing_enabled": "Enable swinging",
+	"option.hook_and_reel.rappel_enabled": "Enable rappelling"
+}

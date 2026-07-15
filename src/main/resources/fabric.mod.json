@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "hook_and_reel",
+	"version": "${version}",
+	"name": "Hook & Reel",
+	"description": "Server-authoritative fishing enhancements and future grappling foundations.",
+	"authors": [
+		"寿云"
+	],
+	"contact": {
+		"homepage": "https://github.com/ikunkk02-afk/Hook-Reel",
+		"sources": "https://github.com/ikunkk02-afk/Hook-Reel",
+		"issues": "https://github.com/ikunkk02-afk/Hook-Reel/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/hook_and_reel/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.ikunkk02afk.hookandreel.HookReel"
+		],
+		"client": [
+			"com.ikunkk02afk.hookandreel.client.HookReelClient"
+		],
+		"modmenu": [
+			"com.ikunkk02afk.hookandreel.client.config.HookReelModMenu"
+		]
+	},
+	"mixins": [
+		"hook_and_reel.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"cloth-config": ">=15.0.140"
+	},
+	"suggests": {
+		"modmenu": ">=11.0.4"
+	}
+}
