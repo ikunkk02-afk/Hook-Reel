@@ -16,6 +16,10 @@ public final class ModEnchantments {
 		Registries.ENCHANTMENT,
 		HookReel.id("grappling_hook")
 	);
+	public static final ResourceKey<Enchantment> ANCHOR_HOOK = ResourceKey.create(
+		Registries.ENCHANTMENT,
+		HookReel.id("anchor_hook")
+	);
 
 	private ModEnchantments() {
 	}

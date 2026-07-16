@@ -3,9 +3,9 @@
 	"id": "hook_and_reel",
 	"version": "${version}",
 	"name": "Hook & Reel",
-	"description": "Server-authoritative fishing enhancements and future grappling foundations.",
+	"description": "Extends vanilla fishing rods with enhanced fishing, grappling, block pulling, anchor hooks, rappelling, and wall movement.",
 	"authors": [
-		"寿云"
+		"ikunkk02-afk"
 	],
 	"contact": {
 		"homepage": "https://github.com/ikunkk02-afk/Hook-Reel",

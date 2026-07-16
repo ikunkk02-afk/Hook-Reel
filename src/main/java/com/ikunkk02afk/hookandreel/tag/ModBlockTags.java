@@ -14,6 +14,10 @@ public final class ModBlockTags {
 		Registries.BLOCK,
 		HookReel.id("grapple_multiblock_unsafe")
 	);
+	public static final TagKey<Block> SWING_UNHOOKABLE = TagKey.create(
+		Registries.BLOCK,
+		HookReel.id("swing_unhookable")
+	);
 
 	private ModBlockTags() {
 	}

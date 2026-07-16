@@ -5,6 +5,9 @@ import net.fabricmc.api.ModInitializer;
 import com.ikunkk02afk.hookandreel.component.ModDataComponents;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
 import com.ikunkk02afk.hookandreel.entity.ModEntityTypes;
+import com.ikunkk02afk.hookandreel.fishing.FishingEntityPullController;
+import com.ikunkk02afk.hookandreel.grapple.HookModeLifecycle;
+import com.ikunkk02afk.hookandreel.grapple.WallClingController;
 import com.ikunkk02afk.hookandreel.network.HookReelNetworking;
 import net.minecraft.resources.ResourceLocation;
 
@@ -25,6 +28,9 @@ public class HookReel implements ModInitializer {
 		ModDataComponents.register();
 		ModEntityTypes.register();
 		HookReelNetworking.initialize();
+		HookModeLifecycle.initialize();
+		WallClingController.initialize();
+		FishingEntityPullController.initialize();
 		LOGGER.info("Hook & Reel initialized");
 	}
 

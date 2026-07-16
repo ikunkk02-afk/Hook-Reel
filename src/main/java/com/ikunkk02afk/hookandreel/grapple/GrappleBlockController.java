@@ -1,5 +1,6 @@
 package com.ikunkk02afk.hookandreel.grapple;
 
+import com.ikunkk02afk.hookandreel.component.GrappleMode;
 import com.ikunkk02afk.hookandreel.config.HookReelConfig;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
 import com.ikunkk02afk.hookandreel.entity.PulledBlockEntity;
@@ -43,6 +44,7 @@ public final class GrappleBlockController {
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (
 			!access.hookAndReel$isGrapple()
+				|| access.hookAndReel$getLaunchMode() != GrappleMode.PULL
 				|| !config.blockPullingEnabled
 				|| !isEligible(level, pos, expectedState, blockEntity, config)
 				|| !hasBreakPermission(level, player, pos, expectedState, access.hookAndReel$getLaunchRod())
@@ -311,11 +313,13 @@ public final class GrappleBlockController {
 		HookReelConfig config = HookReelConfigManager.get();
 		if (!rod.isEmpty()) {
 			int cooldownTicks = switch (reason) {
-				case SUCCESS, TIMEOUT -> Math.max(0, config.grappleCooldownSeconds * 20);
-				case MANUAL_CANCEL -> GrappleCooldown.CANCEL_COOLDOWN_TICKS;
+				case SUCCESS, TIMEOUT -> HookAbilityCooldownManager.secondsToTicks(config.grapplingHookCooldownSeconds);
+				case MANUAL_CANCEL -> config.grapplingHookCooldownSeconds > 0.0D
+					? HookAbilityCooldownManager.PULL_CANCEL_COOLDOWN_TICKS
+					: 0;
 				case LIFECYCLE -> 0;
 			};
-			GrappleCooldown.set(rod, hook.level(), cooldownTicks);
+			HookAbilityCooldownManager.set(rod, hook.level(), HookAbilityCooldown.PULL, cooldownTicks);
 		}
 		if (
 			reason == EndReason.SUCCESS

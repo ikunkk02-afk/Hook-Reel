@@ -1,5 +1,7 @@
 package com.ikunkk02afk.hookandreel.grapple;
 
+import com.ikunkk02afk.hookandreel.component.GrappleMode;
+import com.ikunkk02afk.hookandreel.component.GrappleModeComponent;
 import com.ikunkk02afk.hookandreel.config.HookReelConfig;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
 import net.minecraft.server.level.ServerLevel;
@@ -29,13 +31,22 @@ public final class GrappleLauncher {
 		int chargeTicks
 	) {
 		HookReelConfig config = HookReelConfigManager.get();
-		int enchantmentLevel = GrappleEnchantmentLogic.getLevel(level, stack);
+		GrappleMode mode = level.isClientSide
+			? GrappleModeComponent.getEffective(level, stack)
+			: GrappleModeComponent.getAndRepair(level, stack);
+		int enchantmentLevel = mode == GrappleMode.PULL
+			? GrappleEnchantmentLogic.getLevel(level, stack)
+			: AnchorHookLogic.getLevel(level, stack);
 		int maximumChargeTicks = GrappleEnchantmentLogic.secondsToTicks(config.maxChargeTimeSeconds);
-		double maximumRange = GrappleEnchantmentLogic.maximumRangeForLevel(enchantmentLevel, config);
+		double maximumRange = mode == GrappleMode.PULL
+			? GrappleEnchantmentLogic.maximumRangeForLevel(enchantmentLevel, config)
+			: AnchorHookLogic.maximumRangeForLevel(enchantmentLevel, config);
 		double actualRange = GrappleMath.actualRange(
 			chargeTicks,
 			maximumChargeTicks,
-			config.minimumGrappleRange,
+			mode == GrappleMode.SWING
+				? Math.min(config.minimumGrappleRange, maximumRange)
+				: config.minimumGrappleRange,
 			maximumRange
 		);
 
@@ -53,7 +64,14 @@ public final class GrappleLauncher {
 			int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
 			int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
 			FishingHook hook = new FishingHook(player, level, luck, lureSpeed);
-			((GrapplingBobberAccess) hook).hookAndReel$initializeGrapple(stack, hand, actualRange);
+			((GrapplingBobberAccess) hook).hookAndReel$initializeHook(
+				stack,
+				hand,
+				mode,
+				actualRange,
+				mode == GrappleMode.SWING ? maximumRange : actualRange,
+				mode == GrappleMode.SWING ? enchantmentLevel : 0
+			);
 			Vec3 initialDirection = hook.getDeltaMovement();
 			if (initialDirection.lengthSqr() > 1.0E-8D) {
 				hook.setDeltaMovement(initialDirection.normalize().scale(GrappleMath.launchSpeed(actualRange)));

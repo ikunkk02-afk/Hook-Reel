@@ -1,14 +1,20 @@
 package com.ikunkk02afk.hookandreel.mixin;
 
+import com.ikunkk02afk.hookandreel.component.GrappleMode;
+import com.ikunkk02afk.hookandreel.component.GrappleModeComponent;
 import com.ikunkk02afk.hookandreel.config.HookReelConfig;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
-import com.ikunkk02afk.hookandreel.grapple.GrappleCooldown;
+import com.ikunkk02afk.hookandreel.grapple.AnchorHookLogic;
 import com.ikunkk02afk.hookandreel.grapple.GrappleEnchantmentLogic;
 import com.ikunkk02afk.hookandreel.grapple.GrappleLauncher;
 import com.ikunkk02afk.hookandreel.grapple.GrapplePullController;
 import com.ikunkk02afk.hookandreel.grapple.GrapplingBobberAccess;
+import com.ikunkk02afk.hookandreel.grapple.HookAbilityCooldown;
+import com.ikunkk02afk.hookandreel.grapple.HookAbilityCooldownManager;
+import com.ikunkk02afk.hookandreel.grapple.HookState;
+import com.ikunkk02afk.hookandreel.grapple.SwingController;
+import com.ikunkk02afk.hookandreel.grapple.SwingDetachReason;
 import com.ikunkk02afk.hookandreel.network.HookReelNetworking;
-import java.util.Locale;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -45,41 +51,80 @@ public abstract class FishingRodItemMixin extends Item {
 	) {
 		ItemStack stack = player.getItemInHand(hand);
 		int grapplingLevel = GrappleEnchantmentLogic.getLevel(level, stack);
-		if (grapplingLevel <= 0) {
+		int anchorLevel = AnchorHookLogic.getLevel(level, stack);
+		if (grapplingLevel <= 0 && anchorLevel <= 0) {
 			return;
 		}
+		GrappleMode mode = level.isClientSide
+			? GrappleModeComponent.getEffective(level, stack)
+			: GrappleModeComponent.getAndRepair(level, stack);
+		HookReelConfig config = HookReelConfigManager.get();
 
 		FishingHook existingHook = player.fishing;
 		if (existingHook != null) {
-			if (!level.isClientSide && existingHook instanceof GrapplingBobberAccess access && access.hookAndReel$isGrapple()) {
-				if (access.hookAndReel$isPulling(existingHook.getHookedIn())) {
+			if (existingHook instanceof GrapplingBobberAccess access && access.hookAndReel$isGrapple()) {
+				boolean swingHook = access.hookAndReel$getHookState().isAnchored()
+					|| !level.isClientSide && access.hookAndReel$getLaunchMode() == GrappleMode.SWING;
+				if (swingHook) {
+					if (!level.isClientSide) {
+						SwingController.detach(existingHook, SwingDetachReason.PLAYER_RETRIEVE);
+						playRetrieveFeedback(level, player);
+					}
+					cir.setReturnValue(InteractionResultHolder.sidedSuccess(stack, level.isClientSide));
+				} else if (!level.isClientSide && access.hookAndReel$isPulling(existingHook.getHookedIn())) {
 					GrapplePullController.manualCancel(existingHook);
 					playRetrieveFeedback(level, player);
 					cir.setReturnValue(InteractionResultHolder.sidedSuccess(stack, false));
-				} else {
-					GrappleCooldown.set(access.hookAndReel$getLaunchRod(), level, GrappleCooldown.CANCEL_COOLDOWN_TICKS);
+				} else if (!level.isClientSide) {
+					HookAbilityCooldownManager.set(
+						access.hookAndReel$getLaunchRod(),
+						level,
+						HookAbilityCooldown.PULL,
+						config.grapplingHookCooldownSeconds > 0.0D
+							? HookAbilityCooldownManager.PULL_CANCEL_COOLDOWN_TICKS
+							: 0
+					);
 				}
 			}
 			return;
 		}
 
-		HookReelConfig config = HookReelConfigManager.get();
-		if (!config.grapplingHookEnabled) {
+		if (mode == GrappleMode.PULL && !config.grapplingHookEnabled || mode == GrappleMode.SWING && !config.anchorHookEnabled) {
 			return;
 		}
-		int fullCooldownTicks = Math.max(0, config.grappleCooldownSeconds * 20);
-		int expectedMaximum = Math.max(fullCooldownTicks, GrappleCooldown.CANCEL_COOLDOWN_TICKS);
+		HookAbilityCooldown ability = mode == GrappleMode.PULL
+			? HookAbilityCooldown.PULL
+			: HookAbilityCooldown.ANCHOR;
+		int fullCooldownTicks = HookAbilityCooldownManager.secondsToTicks(
+			mode == GrappleMode.PULL
+				? config.grapplingHookCooldownSeconds
+				: config.anchorHookCooldownSeconds
+		);
+		int expectedMaximum = fullCooldownTicks <= 0
+			? 0
+			: mode == GrappleMode.PULL
+				? Math.max(fullCooldownTicks, HookAbilityCooldownManager.PULL_CANCEL_COOLDOWN_TICKS)
+				: Math.max(
+					fullCooldownTicks,
+					HookAbilityCooldownManager.secondsToTicks(config.anchorHookFailedCastDelaySeconds)
+				);
 		long remaining = level.isClientSide
-			? GrappleCooldown.remainingTicks(stack, level, expectedMaximum)
-			: GrappleCooldown.sanitizeAndGetRemaining(stack, level, expectedMaximum);
+			? HookAbilityCooldownManager.remainingTicks(stack, level, ability, expectedMaximum)
+			: HookAbilityCooldownManager.sanitizeAndGetRemaining(stack, level, ability, expectedMaximum);
 		if (remaining > 0L) {
 			if (player instanceof ServerPlayer) {
-				String seconds = String.format(Locale.ROOT, "%.1f", remaining / 20.0D);
+				String seconds = HookAbilityCooldownManager.formatRemainingSeconds(remaining);
 				player.displayClientMessage(
-					Component.translatable("message.hook_and_reel.grapple_cooldown", seconds),
+					Component.translatable(
+						mode == GrappleMode.PULL
+							? "message.hook_and_reel.grapple_cooldown"
+							: "message.hook_and_reel.anchor_cooldown",
+						seconds
+					),
 					true
 				);
 			}
+			cir.setReturnValue(InteractionResultHolder.fail(stack));
 			return;
 		}
 
@@ -96,6 +141,29 @@ public abstract class FishingRodItemMixin extends Item {
 		cir.setReturnValue(InteractionResultHolder.consume(stack));
 	}
 
+	@Inject(
+		method = "use",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z",
+			shift = At.Shift.AFTER
+		)
+	)
+	private void hookAndReel$captureVanillaFishingCast(
+		Level level,
+		Player player,
+		InteractionHand hand,
+		CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir
+	) {
+		if (
+			!level.isClientSide
+				&& player.fishing instanceof GrapplingBobberAccess access
+				&& !access.hookAndReel$isGrapple()
+		) {
+			access.hookAndReel$initializeFishingCast(player.getItemInHand(hand), hand);
+		}
+	}
+
 	@Override
 	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return GRAPPLE_USE_DURATION;
@@ -103,17 +171,28 @@ public abstract class FishingRodItemMixin extends Item {
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int remainingUseTicks) {
-		if (!(user instanceof Player player) || player.fishing != null) {
+		if (!(user instanceof Player player)) {
 			return;
 		}
-		HookReelConfig config = HookReelConfigManager.get();
-		if (!config.grapplingHookEnabled || GrappleEnchantmentLogic.getLevel(level, stack) <= 0) {
-			return;
-		}
-		int chargeTicks = Math.max(0, GRAPPLE_USE_DURATION - remainingUseTicks);
 		if (player instanceof ServerPlayer serverPlayer) {
 			HookReelNetworking.sendChargeState(serverPlayer, false, level.getGameTime(), 0);
 		}
+		if (player.fishing != null) {
+			return;
+		}
+		HookReelConfig config = HookReelConfigManager.get();
+		int grapplingLevel = GrappleEnchantmentLogic.getLevel(level, stack);
+		int anchorLevel = AnchorHookLogic.getLevel(level, stack);
+		if (grapplingLevel <= 0 && anchorLevel <= 0) {
+			return;
+		}
+		GrappleMode mode = level.isClientSide
+			? GrappleModeComponent.getEffective(level, stack)
+			: GrappleModeComponent.getAndRepair(level, stack);
+		if (mode == GrappleMode.PULL && !config.grapplingHookEnabled || mode == GrappleMode.SWING && !config.anchorHookEnabled) {
+			return;
+		}
+		int chargeTicks = Math.max(0, GRAPPLE_USE_DURATION - remainingUseTicks);
 		GrappleLauncher.launch(
 			(FishingRodItem) (Object) this,
 			level,

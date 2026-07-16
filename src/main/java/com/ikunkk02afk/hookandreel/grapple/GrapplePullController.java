@@ -1,5 +1,6 @@
 package com.ikunkk02afk.hookandreel.grapple;
 
+import com.ikunkk02afk.hookandreel.component.GrappleMode;
 import com.ikunkk02afk.hookandreel.config.HookReelConfig;
 import com.ikunkk02afk.hookandreel.config.HookReelConfigManager;
 import com.ikunkk02afk.hookandreel.entity.PulledBlockEntity;
@@ -39,6 +40,9 @@ public final class GrapplePullController {
 	public static void beginPull(FishingHook hook, Entity target) {
 		GrapplingBobberAccess access = (GrapplingBobberAccess) hook;
 		HookReelConfig config = HookReelConfigManager.get();
+		if (access.hookAndReel$getLaunchMode() != GrappleMode.PULL) {
+			return;
+		}
 		if (!access.hookAndReel$isGrapple() || !isPullable(target, config)) {
 			finish(hook, EndReason.DENIED, target);
 			return;
@@ -49,7 +53,11 @@ public final class GrapplePullController {
 
 	public static void tick(FishingHook hook) {
 		GrapplingBobberAccess access = (GrapplingBobberAccess) hook;
-		if (!access.hookAndReel$isGrapple() || hook.level().isClientSide) {
+		if (
+			!access.hookAndReel$isGrapple()
+				|| access.hookAndReel$getLaunchMode() != GrappleMode.PULL
+				|| hook.level().isClientSide
+		) {
 			return;
 		}
 		Player owner = hook.getPlayerOwner();
@@ -151,11 +159,13 @@ public final class GrapplePullController {
 		HookReelConfig config = HookReelConfigManager.get();
 		if (!rod.isEmpty()) {
 			int cooldownTicks = switch (reason) {
-				case SUCCESS, TIMEOUT -> Math.max(0, config.grappleCooldownSeconds * 20);
-				case MANUAL_CANCEL, DENIED -> GrappleCooldown.CANCEL_COOLDOWN_TICKS;
+				case SUCCESS, TIMEOUT -> HookAbilityCooldownManager.secondsToTicks(config.grapplingHookCooldownSeconds);
+				case MANUAL_CANCEL, DENIED -> config.grapplingHookCooldownSeconds > 0.0D
+					? HookAbilityCooldownManager.PULL_CANCEL_COOLDOWN_TICKS
+					: 0;
 				case LIFECYCLE -> 0;
 			};
-			GrappleCooldown.set(rod, hook.level(), cooldownTicks);
+			HookAbilityCooldownManager.set(rod, hook.level(), HookAbilityCooldown.PULL, cooldownTicks);
 		}
 		if (reason == EndReason.SUCCESS && hook.level() instanceof ServerLevel serverLevel && hook.getPlayerOwner() instanceof ServerPlayer player) {
 			int durability = target instanceof ItemEntity ? 3 : 5;

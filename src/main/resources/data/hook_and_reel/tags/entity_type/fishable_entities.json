@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#hook_and_reel:fishable_aquatic_entities",
+    "#hook_and_reel:fishable_land_animals",
+    "#hook_and_reel:fishable_land_monsters",
+    "#hook_and_reel:fishable_nether_entities",
+    "#hook_and_reel:fishable_boss_entities"
+  ]
+}

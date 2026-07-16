@@ -2,7 +2,9 @@ package com.ikunkk02afk.hookandreel.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.ikunkk02afk.hookandreel.HookReel;
 import java.io.IOException;
 import java.io.Reader;
@@ -37,18 +39,70 @@ public final class HookReelConfigManager {
 		try {
 			HookReelConfig loaded;
 			try (Reader reader = Files.newBufferedReader(path)) {
-				loaded = GSON.fromJson(reader, HookReelConfig.class);
+				JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+				loaded = GSON.fromJson(root, HookReelConfig.class);
+				applyLegacyCooldownMigrations(root, loaded);
 			}
 			if (loaded == null) {
 				throw new JsonParseException("Config root must be a JSON object");
 			}
 			current = loaded.validatedCopy();
 			write(path, current);
-		} catch (IOException | JsonParseException exception) {
+		} catch (IOException | RuntimeException exception) {
 			HookReel.LOGGER.warn("Could not read {}; restoring defaults", path, exception);
 			backupBrokenFile(path);
 			current = new HookReelConfig();
 			write(path, current);
+		}
+	}
+
+	private static void applyLegacyCooldownMigrations(JsonObject root, HookReelConfig loaded) {
+		if (root.has("grapplingHookCooldownSeconds")) {
+			loaded.grapplingHookCooldownSeconds = doubleOrDefault(
+				root,
+				"grapplingHookCooldownSeconds",
+				HookReelConfig.DEFAULT_GRAPPLING_HOOK_COOLDOWN_SECONDS
+			);
+		} else if (root.has("grappleCooldownSeconds")) {
+			loaded.grapplingHookCooldownSeconds = doubleOrDefault(
+				root,
+				"grappleCooldownSeconds",
+				HookReelConfig.DEFAULT_GRAPPLING_HOOK_COOLDOWN_SECONDS
+			);
+		} else if (root.has("hookCooldownSeconds")) {
+			loaded.grapplingHookCooldownSeconds = doubleOrDefault(
+				root,
+				"hookCooldownSeconds",
+				HookReelConfig.DEFAULT_GRAPPLING_HOOK_COOLDOWN_SECONDS
+			);
+		}
+
+		if (root.has("anchorHookCooldownSeconds")) {
+			loaded.anchorHookCooldownSeconds = doubleOrDefault(
+				root,
+				"anchorHookCooldownSeconds",
+				HookReelConfig.DEFAULT_ANCHOR_HOOK_COOLDOWN_SECONDS
+			);
+		} else if (root.has("swingRecastDelaySeconds")) {
+			loaded.anchorHookCooldownSeconds = doubleOrDefault(
+				root,
+				"swingRecastDelaySeconds",
+				HookReelConfig.DEFAULT_ANCHOR_HOOK_COOLDOWN_SECONDS
+			);
+		} else if (root.has("hookCooldownSeconds")) {
+			loaded.anchorHookCooldownSeconds = doubleOrDefault(
+				root,
+				"hookCooldownSeconds",
+				HookReelConfig.DEFAULT_ANCHOR_HOOK_COOLDOWN_SECONDS
+			);
+		}
+	}
+
+	private static double doubleOrDefault(JsonObject root, String key, double defaultValue) {
+		try {
+			return root.get(key).getAsDouble();
+		} catch (RuntimeException exception) {
+			return defaultValue;
 		}
 	}
 

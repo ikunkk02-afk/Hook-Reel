@@ -36,9 +36,17 @@ bin/
 /logs/
 /crash-reports/
 
+# local development tools
+
+/.agents/
+/.codex/
+/.github/modernize/
+
 # java
 
 hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+*.log
+*.tmp

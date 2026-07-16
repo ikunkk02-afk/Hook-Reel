@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 
 public final class LuckyCatchLogic {
 	private LuckyCatchLogic() {
@@ -17,8 +18,7 @@ public final class LuckyCatchLogic {
 
 	public static float addFishingLuck(float vanillaLuck, ItemStack rod, ServerLevel level) {
 		Registry<Enchantment> enchantments = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-		Holder<Enchantment> luckyCatch = enchantments.getHolderOrThrow(ModEnchantments.LUCKY_CATCH);
-		int luckyLevel = EnchantmentHelper.getItemEnchantmentLevel(luckyCatch, rod);
+		int luckyLevel = getLevel(level, rod);
 		if (luckyLevel <= 0) {
 			return vanillaLuck;
 		}
@@ -30,6 +30,12 @@ public final class LuckyCatchLogic {
 			hasLuckOfTheSea,
 			HookReelConfigManager.get()
 		);
+	}
+
+	public static int getLevel(Level level, ItemStack rod) {
+		Registry<Enchantment> enchantments = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+		Holder<Enchantment> luckyCatch = enchantments.getHolderOrThrow(ModEnchantments.LUCKY_CATCH);
+		return EnchantmentHelper.getItemEnchantmentLevel(luckyCatch, rod);
 	}
 
 	public static float calculateExtraLuck(

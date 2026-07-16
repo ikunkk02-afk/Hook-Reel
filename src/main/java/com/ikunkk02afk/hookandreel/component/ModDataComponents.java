@@ -13,7 +13,12 @@ public final class ModDataComponents {
 		.persistent(GrappleMode.CODEC)
 		.networkSynchronized(GrappleMode.STREAM_CODEC)
 		.build();
-	public static final DataComponentType<Long> GRAPPLE_COOLDOWN_UNTIL = DataComponentType
+	public static final DataComponentType<Long> PULL_COOLDOWN_UNTIL = DataComponentType
+		.<Long>builder()
+		.persistent(Codec.LONG)
+		.networkSynchronized(ByteBufCodecs.VAR_LONG)
+		.build();
+	public static final DataComponentType<Long> ANCHOR_COOLDOWN_UNTIL = DataComponentType
 		.<Long>builder()
 		.persistent(Codec.LONG)
 		.networkSynchronized(ByteBufCodecs.VAR_LONG)
@@ -31,7 +36,12 @@ public final class ModDataComponents {
 		Registry.register(
 			BuiltInRegistries.DATA_COMPONENT_TYPE,
 			HookReel.id("grapple_cooldown_until"),
-			GRAPPLE_COOLDOWN_UNTIL
+			PULL_COOLDOWN_UNTIL
+		);
+		Registry.register(
+			BuiltInRegistries.DATA_COMPONENT_TYPE,
+			HookReel.id("anchor_cooldown_until"),
+			ANCHOR_COOLDOWN_UNTIL
 		);
 	}
 }

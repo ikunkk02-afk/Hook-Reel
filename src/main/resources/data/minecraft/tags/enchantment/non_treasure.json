@@ -2,6 +2,7 @@
 	"replace": false,
 	"values": [
 		"hook_and_reel:lucky_catch",
-		"hook_and_reel:grappling_hook"
+    "hook_and_reel:grappling_hook",
+    "hook_and_reel:anchor_hook"
 	]
 }
